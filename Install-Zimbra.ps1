@@ -23,7 +23,7 @@ function Install-Zimbra {
        [Alias("EW6")]        
        [ValidateNotNullOrEmpty()]        
        [string[]]        
-       $MSIDownload= "https://github.com/apihlak/Sysmon/raw/master/ZimbraConnector8.0.8.1178_x86.msi"      
+       $MSIDownload= "https://github.com/apihlak/Zimbra/raw/master/ZimbraConnector8.0.8.1178_x86.msi"      
     )
 
     Begin {
