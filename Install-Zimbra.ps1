@@ -19,7 +19,7 @@ function Install-Zimbra {
               
        [Parameter(Mandatory=$false,      
                Position=1,       
-               HelpMessage="Winlogbeat 64 bit download path.")]      
+               HelpMessage="Zimbra 32 bit download path.")]      
        [Alias("EW6")]        
        [ValidateNotNullOrEmpty()]        
        [string[]]        
@@ -30,14 +30,20 @@ function Install-Zimbra {
     }
     Process {
             
-        #Install Zimbra
+        If ((Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" | Select-Object DisplayName | Where-Object { $_.DisplayName -Like '*Zimbra*' }) -eq $null) {
+
+            #Make directory for Zimbra msi
             New-Item -Path $Path_Zimbra -ItemType Directory
+
+            #Set location
             Set-Location -Path "$Path_Zimbra"
 
+            #Install file
             (New-Object System.Net.WebClient).DownloadFile("$MSIDownload","$Path_Zimbra\ZimbraConnector.msi")
-
-            Start-Process msiexec.exe -Wait -ArgumentList '/I ZimbraConnector.msi /lv C:\Zimbra.log /qb'
-      }
+        
+            #Install Zimbra Connector
+            Start-Process msiexec.exe -Wait -ArgumentList '/I ZimbraConnector.msi /qb'
+        }
     End {
         }
     }
