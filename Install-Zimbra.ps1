@@ -43,9 +43,8 @@ function Install-Zimbra {
             
             #Install Zimbra Connector
             Start-Process msiexec.exe -Wait -ArgumentList '/I ZimbraConnector.msi /qb'
-    }
-
+      }
+    }  
     End {
         }
     }
-}
