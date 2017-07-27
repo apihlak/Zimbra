@@ -42,7 +42,7 @@ function Install-Zimbra {
             (New-Object System.Net.WebClient).DownloadFile("$MSIDownload","$Path_Zimbra\ZimbraConnector.msi")
             
             #Install Zimbra Connector
-            Start-Process msiexec.exe -Wait -ArgumentList '/I ZimbraConnector.msi /qb'
+            Start-Process msiexec.exe -Wait -ArgumentList '/I ZimbraConnector.msi /qr'
       }
     }  
     End {
