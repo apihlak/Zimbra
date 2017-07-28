@@ -16,20 +16,7 @@ ForEach ($computer in $name) {
   }
 }
 
-##Test
+##Archive creation
+foreach ($Mailbox in (Get-Mailbox -Filter {Name -like 'Andres Pihlak'})) { Export-Mailbox -Identity $Mailbox -PSTFolderPath "\\file01-tln-ee\home\Andres.Pihlak\$($Mailbox.Alias).pst" }
 
-$name = Get-Adcomputer -Filter {(enabled -eq $True) -and (Name -like 'TGSITS001') } -SearchBase "dc=office,dc=linxtelecom,dc=com" | Select-Object -ExpandProperty Name
-ForEach ($computer in $name) {
-  if (Test-WSMan -ComputerName $computer -ErrorAction Ignore) {
-  Write-Warning -Message “Connecting to $computer”
-  Invoke-Command -ComputerName $computer -ScriptBlock { 
-      If ((Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" | Select-Object DisplayName | Where-Object { $_.DisplayName -Like '*Zimbra*' }) -eq $null) {    
-        Write-Warning -Message “Running script”
-      } else {
-        Write-Warning -Message “Zimbra Connector exists”
-      }
-    }
-  } else {
-  Write-Warning -Message “Couldn’t connect to $computer”
-  }
-}
+
