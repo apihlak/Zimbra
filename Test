@@ -22,3 +22,10 @@ foreach ($Mailbox in (Get-Mailbox -Filter {Name -like 'Andres Pihlak'})) { Expor
 ##Add forwarding
 New-MailContact -Name "Isaiah Fan" -ExternalEmailAddress "isaiah.fan@citictel-cpc.com"
 Set-Mailbox isaiah.fan -ForwardingAddress "isaiah.fan@citictel-cpc.com"
+
+##Adding arhicve to Outlook
+
+Add-type -assembly "Microsoft.Office.Interop.Outlook" | out-null 
+$outlook = new-object -comobject outlook.application 
+$namespace = $outlook.GetNameSpace("MAPI") 
+dir “\\file01-tln-ee\home\$env:UserName\$env:UserName.pst” | % { $namespace.AddStore($_.FullName) }
