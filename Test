@@ -20,4 +20,5 @@ ForEach ($computer in $name) {
 foreach ($Mailbox in (Get-Mailbox -Filter {Name -like 'Andres Pihlak'})) { Export-Mailbox -Identity $Mailbox -PSTFolderPath "\\file01-tln-ee\home\Andres.Pihlak\$($Mailbox.Alias).pst" }
 
 ##Add forwarding
-Set-Mailbox andres.pihlak -ForwardingAddress "andres.pihlak@citictel-cpc.com"
+New-MailContact -Name "Isaiah Fan" -ExternalEmailAddress "isaiah.fan@citictel-cpc.com"
+Set-Mailbox isaiah.fan -ForwardingAddress "isaiah.fan@citictel-cpc.com"
