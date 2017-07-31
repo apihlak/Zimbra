@@ -17,6 +17,7 @@ ForEach ($computer in $name) {
 }
 
 ##Archive creation
+Add-MailboxPermission -Identity 'Andres Pihlak' -User prodigyf -AccessRights FullAccess
 foreach ($Mailbox in (Get-Mailbox -Filter {Name -like 'Andres Pihlak'})) { Export-Mailbox -Identity $Mailbox -PSTFolderPath "\\file01-tln-ee\home\Andres.Pihlak\$($Mailbox.Alias).pst" }
 
 ##Add forwarding
