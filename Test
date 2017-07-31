@@ -1,7 +1,22 @@
-##Run script
-$name = Get-Adcomputer -Filter {(enabled -eq $True) -and (Name -like '*EE') } -SearchBase "ou=Linxtelecom,dc=office,dc=linxtelecom,dc=com" | Select-Object -ExpandProperty Name
+$realname = "Firstname Lastname"
+$username = "AD username"
+$computername = "Computer name"
+$admin = "Admin username"
+
+Add-PSSnapin Microsoft.Exchange.Management.PowerShell.Admin
+
+#Add forwarding @linxtelecom to @citictel-cpc.com
+New-MailContact -Name $realname -ExternalEmailAddress $username@citictel-cpc.com
+Set-Mailbox $username -ForwardingAddress $username@citictel-cpc.com
+
+#Create archive in Exchange Management Console
+Add-MailboxPermission -Identity $username -User $admin -AccessRights FullAccess
+foreach ($Mailbox in (Get-Mailbox -Filter {Name -like $realname})) { Export-Mailbox -Identity $Mailbox -PSTFolderPath "\\linx\root\home\$($Mailbox.Alias)\$($Mailbox.Alias).pst" -ExcludeFolders "\Deleted Items" -confirm:$false }
+
+#Install Zimbra Connector in Powershell
+$name = Get-Adcomputer -Filter {(enabled -eq $True) -and (Name -like $computername) } -SearchBase "ou=Linxtelecom,dc=office,dc=linxtelecom,dc=com" | Select-Object -ExpandProperty Name
 ForEach ($computer in $name) {
-  if (Test-WSMan -ComputerName $computer -ErrorAction Ignore) {
+  if (Test-Connection -comp $computer -quiet) {
   Write-Warning -Message “Connecting to $computer”
   Invoke-Command -ComputerName $computer -ScriptBlock { 
       If ((Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" | Select-Object DisplayName | Where-Object { $_.DisplayName -Like '*Zimbra*' }) -eq $null) {    
@@ -15,18 +30,3 @@ ForEach ($computer in $name) {
   Write-Warning -Message “Couldn’t connect to $computer”
   }
 }
-
-##Archive creation
-Add-MailboxPermission -Identity 'Andres Pihlak' -User prodigyf -AccessRights FullAccess
-foreach ($Mailbox in (Get-Mailbox -Filter {Name -like 'Andres Pihlak'})) { Export-Mailbox -Identity $Mailbox -PSTFolderPath "\\file01-tln-ee\home\Andres.Pihlak\$($Mailbox.Alias).pst" }
-
-##Add forwarding
-New-MailContact -Name "Isaiah Fan" -ExternalEmailAddress "isaiah.fan@citictel-cpc.com"
-Set-Mailbox isaiah.fan -ForwardingAddress "isaiah.fan@citictel-cpc.com"
-
-##Adding arhicve to Outlook
-
-Add-type -assembly "Microsoft.Office.Interop.Outlook" | out-null 
-$outlook = new-object -comobject outlook.application 
-$namespace = $outlook.GetNameSpace("MAPI") 
-dir “\\file01-tln-ee\home\$env:UserName\$env:UserName.pst” | % { $namespace.AddStore($_.FullName) }
